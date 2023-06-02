@@ -34,10 +34,20 @@ class BibleGatewayAPI {
             const verse = document.querySelector(".bcv").textContent;
             let elements = [].slice.call(document.querySelectorAll(".text"));
             let content = [];
+            let bannedStrings = 'Read the Bible,Study Tools,Explore More,Bible GatewayPlus,Store,Sign Up For Weekly Updates,Sign up now for the latest news and deals from Bible Gateway!'
+            let stringsToRemove = bannedStrings.split(',')
             for (let i = 0; i < elements.length; i++) {
                 let text = elements[i].textContent;
-                if (text.substr(0, 4) != "Back")
+                let crossRefRE = /(\(|\[)[a-zA-Z](\)|\])/g
+                for (let j = 0; j < stringsToRemove.length; j++) {
+                    text = text.replace(crossRefRE, "");
+                    if (text.includes(stringsToRemove[j])) {
+                        text = text.replace(stringsToRemove[j], "");
+                    }
+                }
+                if (text.substr(0, 4) != "Back") {
                     content.push(text);
+                }
             }
             if (content.length === 0)
                 throw new Error("Could not find verse");
